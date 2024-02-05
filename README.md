@@ -59,18 +59,17 @@ CREATE TABLE IF NOT EXISTS public.controlcombustible (
 );
 
 -- Crear las funciones (reemplaza con tus funciones específicas)
--- Ejemplo: CREATE FUNCTION nombre_de_tu_funcion() RETURNS void AS $$ -- Cuerpo de la función $$ LANGUAGE plpgsql;
+-- Ejemplo: CREATE FUNCTION nombre_de_tu_funcion() RETURNS void AS $$ -- Cuerpo de la función $$ LANGUAGE plpgsql;
 
+INSERT INTO combustible (tipo_comb)
+VALUES 
+    ('Diesel')
+	
+select * from combustible;
 
-TABLESPACE pg_default;
+------------------------------------------Crear SP---------------------------------- 
 
-ALTER TABLE IF EXISTS public.controlcombustible
-    OWNER to postgres;
-
-TAMBIEN VAMOS A CRAR LAS FUNCIONES QUE UTILIZAREMOS PARA QUE LOS PROCEDIMIENTOS SEAN MAS RAPIDO 
-
-![image](https://github.com/GeovannyMolina25/ControlCombustible/assets/108442886/15628802-9907-42d4-bfce-160da6af80b1)
-
+--OBTENER COMBUSTIBLE ID
 
 -- FUNCTION: public.ObtenerCombustibleId(integer)
 
@@ -92,12 +91,7 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."ObtenerCombustibleId"(integer)
-    OWNER TO postgres;
-
-
-![image](https://github.com/GeovannyMolina25/ControlCombustible/assets/108442886/f4e9dad0-7ff8-48fa-b58f-d1746c90768b)
-
+--OBTENER CONDUCTOR ID 
 
 -- FUNCTION: public.ObtenerConductorId(integer)
 
@@ -119,12 +113,7 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."ObtenerConductorId"(integer)
-    OWNER TO postgres;
-
-
-![image](https://github.com/GeovannyMolina25/ControlCombustible/assets/108442886/fa3e2da9-be6d-4b69-8e82-c922c13de7de)
-
+----OBTENER CONDUCTOR POR VEHICULO 
 
 
 -- FUNCTION: public.ObtenerConductorPorVehiculo(integer)
@@ -155,23 +144,20 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."ObtenerConductorPorVehiculo"(integer)
-    OWNER TO postgres;
+---OBTENER VEHICULO POR DESCRIPCION 
 
+-- FUNCTION: public.ObtenerVehiculoPorDescripcion(character varying)
 
-![image](https://github.com/GeovannyMolina25/ControlCombustible/assets/108442886/fc5f8ffb-0d92-4d4d-9e82-58bb60b2e3b8)
+-- DROP FUNCTION IF EXISTS public."ObtenerVehiculoPorDescripcion"(character varying);
 
-
-
--- Corregir la definición de la función
 CREATE OR REPLACE FUNCTION public."ObtenerVehiculoPorDescripcion"(
-    "descripcionVehiculo" character varying
-)
-RETURNS TABLE(placa_vehiculo character varying) 
-LANGUAGE 'plpgsql'
-COST 100
-VOLATILE PARALLEL UNSAFE
-ROWS 1000
+	"descripcionVehiculo" character varying)
+    RETURNS TABLE(placa_vehiculo character varying) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
 AS $BODY$
 BEGIN
     RETURN QUERY
@@ -184,10 +170,8 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."ObtenerVehiculoPorDescripcion"(character varying)
-OWNER TO postgres;
 
-![image](https://github.com/GeovannyMolina25/ControlCombustible/assets/108442886/c24b1268-8f0c-4e63-aa19-0ee7599f6866)
+---OBTENER VEHICULO POR CONDUCTOR 
 
 -- FUNCTION: public.ObtenerVehiculosPorConductor(integer)
 
@@ -214,10 +198,3 @@ BEGIN
         v.id_conductor = "codConductor";
 END;
 $BODY$;
-
-ALTER FUNCTION public."ObtenerVehiculosPorConductor"(integer)
-    OWNER TO postgres;
-
-
-
-
