@@ -9,6 +9,8 @@ const pool = new Pool({
     port:'5432'
 })
 
+//Consultas
+
 const getCombustible = async(req,res) => {
     const response = await pool.query('Select * from combustible');
     res.status(200).json(response.rows);

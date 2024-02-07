@@ -8,7 +8,7 @@ const pool = new Pool({
     database: 'proyectogasolina',
     port:'5432'
 })
-
+//consultas
 //todos los datos
 const getCombustibleControler = async(req,res) => {
     const response = await pool.query('select * from controlCombustible');
