@@ -1,13 +1,13 @@
-const { response } = require('express');
+require('dotenv').config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    host : 'localhost',
-    user:'postgres',
-    password : '12345678',
-    database: 'proyectogasolina',
-    port:'5432'
-})
+    host : process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password : process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
+});
 
 const getCombustibleControler = async(req,res) => {
     const response = await pool.query('select * from controlCombustible');
@@ -85,7 +85,7 @@ const insertarDatosControlCombustible = async (req, res) => {
 const getCondVehiculo = async (req, res) => {
     try {
         const idConductor = req.params.id;
-        const response = await pool.query('SELECT * FROM public."ObtenerVehiculosPorConductor"($1)', [idConductor]);
+        const response = await pool.query('SELECT public."ObtenerVehiculoPorConductor"($1)', [idConductor]);
 
         if (response.rows && response.rows.length > 0) {
             const vehiculos = response.rows;
