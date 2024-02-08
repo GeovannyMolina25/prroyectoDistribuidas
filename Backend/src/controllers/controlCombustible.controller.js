@@ -8,12 +8,78 @@ const pool = new Pool({
     database: 'proyectogasolina',
     port:'5432'
 })
-//consultas
-//todos los datos
+
 const getCombustibleControler = async(req,res) => {
     const response = await pool.query('select * from controlCombustible');
     res.status(200).json(response.rows);
 }
+
+const insertarDatosControlCombustible = async (req, res) => {
+    try {
+        const {
+            fecha_control,
+            id_vehiculo,
+            descripcion_veh,
+            id_ubicacion,
+            km_inicial_controlc,
+            km_final_controlc,
+            km_recorrido_controlc,
+            galon_controlc,
+            valorcompra_controlc,
+            km_galon_controlc,
+            km_moneda_controlc,
+            id_combustible,
+            no_documento_controlc,
+            comentario_controlc
+        } = req.body;
+
+        const response = await pool.query(
+            'SELECT * FROM public."InsertarDatosControlCombustible"($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)',
+            [
+                fecha_control,
+                id_vehiculo,
+                descripcion_veh,
+                id_ubicacion,
+                km_inicial_controlc,
+                km_final_controlc,
+                km_recorrido_controlc,
+                galon_controlc,
+                valorcompra_controlc,
+                km_galon_controlc,
+                km_moneda_controlc,
+                id_combustible,
+                no_documento_controlc,
+                comentario_controlc
+            ]
+        );
+
+        res.json({
+            message: 'Datos de control de combustible insertados correctamente',
+            body: {
+                datos_insertados: {
+                    fecha_control,
+                    id_vehiculo,
+                    descripcion_veh,
+                    id_ubicacion,
+                    km_inicial_controlc,
+                    km_final_controlc,
+                    km_recorrido_controlc,
+                    galon_controlc,
+                    valorcompra_controlc,
+                    km_galon_controlc,
+                    km_moneda_controlc,
+                    id_combustible,
+                    no_documento_controlc,
+                    comentario_controlc
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error al insertar datos de control de combustible:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
 
 //traer los datos de vehiculo por conductor por conductor
 const getCondVehiculo = async (req, res) => {
@@ -95,6 +161,123 @@ const getVehiDescPorPlaca = async (req, res) => {
     }
 };
 
+const getDatosControlCombustible = async (req, res) => {
+    try {
+        const response = await pool.query(
+            'SELECT placa_vehiculo, descripcion_vehiculo, fecha_control, SUM(galon_controlc) AS total_galon_controlc FROM public."ObtenerDatosControlCombustiblePorConductor"() GROUP BY placa_vehiculo, descripcion_vehiculo, fecha_control;'
+        );
+
+        if (response.rows && response.rows.length > 0) {
+            const datosControlCombustible = {};
+
+            response.rows.forEach(row => {
+                const placa = row.placa_vehiculo;
+                const fecha = row.fecha_control.toISOString().slice(0, 10); // Convertir la fecha a formato ISO
+
+                // Verificar si ya hay datos con la misma placa y fecha
+                if (datosControlCombustible[placa] && datosControlCombustible[placa][fecha]) {
+                    // Si existe, sumar los galones de combustible
+                    datosControlCombustible[placa][fecha].total_galon_controlc += row.total_galon_controlc;
+                } else {
+                    // Si no existe, agregar el nuevo registro
+                    if (!datosControlCombustible[placa]) {
+                        datosControlCombustible[placa] = {};
+                    }
+                    datosControlCombustible[placa][fecha] = row;
+                }
+            });
+
+            // Convertir el objeto a un array de objetos
+            const result = [];
+            for (const placa in datosControlCombustible) {
+                for (const fecha in datosControlCombustible[placa]) {
+                    result.push(datosControlCombustible[placa][fecha]);
+                }
+            }
+
+            res.json(result);
+        } else {
+            res.status(404).json({ message: 'No se encontraron datos de control de combustible' });
+        }
+    } catch (error) {
+        console.error('Error al obtener datos de control de combustible:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+const getDatosControlCombustiblePorConductor = async (req, res) => {
+    try {
+        // Obtener el Id_conductor del cuerpo de la solicitud o de donde corresponda
+        const idConductor = req.body.id; // Suponiendo que se proporciona en el cuerpo de la solicitud
+
+        const response = await pool.query(
+            'SELECT placa_vehiculo, descripcion_vehiculo, fecha_control, SUM(galon_controlc) AS total_galon_controlc FROM public."ObtenerDatosControlCombustiblePorConductor"($1) GROUP BY placa_vehiculo, descripcion_vehiculo, fecha_control;',
+            [idConductor]
+        );
+
+        if (response.rows && response.rows.length > 0) {
+            const datosControlCombustible = {};
+
+            response.rows.forEach(row => {
+                const placa = row.placa_vehiculo;
+                const fecha = row.fecha_control.toISOString().slice(0, 10); // Convertir la fecha a formato ISO
+
+                // Verificar si ya hay datos con la misma placa y fecha
+                if (datosControlCombustible[placa] && datosControlCombustible[placa][fecha]) {
+                    // Si existe, sumar los galones de combustible
+                    datosControlCombustible[placa][fecha].total_galon_controlc += row.total_galon_controlc;
+                } else {
+                    // Si no existe, agregar el nuevo registro
+                    if (!datosControlCombustible[placa]) {
+                        datosControlCombustible[placa] = {};
+                    }
+                    datosControlCombustible[placa][fecha] = row;
+                }
+            });
+
+            // Convertir el objeto a un array de objetos
+            const result = [];
+            for (const placa in datosControlCombustible) {
+                for (const fecha in datosControlCombustible[placa]) {
+                    result.push(datosControlCombustible[placa][fecha]);
+                }
+            }
+
+            res.json(result);
+        } else {
+            res.status(404).json({ message: 'No se encontraron datos de control de combustible para el conductor proporcionado' });
+        }
+    } catch (error) {
+        console.error('Error al obtener datos de control de combustible:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+const getUbiFinalPorUbiOrigen  = async (req, res) => {
+    try {
+        const origen = req.params.origen;
+
+        const response = await pool.query(
+            'SELECT * FROM public."ObtenerUbicacionPorOrigen"($1);',
+            [origen]
+        );
+
+        if (response.rows && response.rows.length > 0) {
+            const destinos = response.rows.map(row => row.destino_ubi);
+            res.json({ destinos }); // Envía el resultado en formato JSON
+        } else {
+            res.status(404).json({ message: 'No se encontraron destinos para el origen proporcionado' });
+        }
+    } catch (error) {
+        console.error('Error al obtener destinos por origen:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+
+
+
+
+
 
 
 
@@ -103,8 +286,12 @@ const getVehiDescPorPlaca = async (req, res) => {
 
 module.exports={
     getCombustibleControler,
+    insertarDatosControlCombustible,
     getCondVehiculo,
     getVehiConductor,
     getVehiculoPorDescripcion,
-    getVehiDescPorPlaca
+    getVehiDescPorPlaca,
+    getDatosControlCombustible,
+    getDatosControlCombustiblePorConductor,
+    getUbiFinalPorUbiOrigen 
 }
