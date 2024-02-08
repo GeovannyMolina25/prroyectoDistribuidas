@@ -6,7 +6,7 @@ const { getVehiculos } = require('../controllers/vehiculos.controller');
 const {getCombustible} = require('../controllers/combustible.controller');
 const {getUbicacion} = require('../controllers/ubicacion.controller');
 const {getCombustibleControler, insertarDatosControlCombustible,getCondVehiculo,getVehiConductor,getVehiculoPorDescripcion,getVehiDescPorPlaca, 
-    getDatosControlCombustible,getDatosControlCombustiblePorConductor,getUbiFinalPorUbiOrigen} = require('../controllers/controlCombustible.controller')
+    getDatosControlCombustible,getDatosControlCombustiblePorConductor,getUbiFinalPorUbiOrigen,getKilometrosRecorridos,getKilometrosRecorridosPorPlaca} = require('../controllers/controlCombustible.controller')
 
 
 
@@ -39,6 +39,8 @@ router.get('/ControlRegistro/placaDescripcionVehiculo/:placa',getVehiDescPorPlac
 router.get('/ControlRegistro/DatosControlCombustible',getDatosControlCombustible);
 router.get('/ControlRegistro/DatosControlCombustiblePorConductor/:id',getDatosControlCombustiblePorConductor);
 router.get('/ControlRegistro/UbiFinalPorUbiOrigen/:origen',getUbiFinalPorUbiOrigen);
-router.post('/ControlRegistro',insertarDatosControlCombustible);
+router.post('/ControlRegistro/ControlRegistro',insertarDatosControlCombustible);
+router.post('/ControlRegistro/KilometrosRecorridos',getKilometrosRecorridos);
+router.post('/ControlRegistro/KilometrosRecorridosPorPlaca/:placa',getKilometrosRecorridosPorPlaca);
 
 module.exports = router; 

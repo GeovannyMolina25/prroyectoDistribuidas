@@ -272,16 +272,44 @@ const getUbiFinalPorUbiOrigen  = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+const getKilometrosRecorridos = async (req, res) => {
+    try {
+        const response = await pool.query(
+            'SELECT * FROM public."ObtenerKilometrosRecorridos"();'
+        );
 
+        if (response.rows && response.rows.length > 0) {
+            const kilometrosRecorridos = response.rows;
+            res.json(kilometrosRecorridos);
+        } else {
+            res.status(404).json({ message: 'No se encontraron datos de kilómetros recorridos' });
+        }
+    } catch (error) {
+        console.error('Error al obtener kilómetros recorridos:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
 
+const getKilometrosRecorridosPorPlaca = async (req, res) => {
+    try {
+        const placa = req.params.placa;
 
+        const response = await pool.query(
+            'SELECT * FROM public."ObtenerKilometrosRecorridosPorPlaca"($1);',
+            [placa]
+        );
 
-
-
-
-
-
-
+        if (response.rows && response.rows.length > 0) {
+            const kilometrosRecorridos = response.rows;
+            res.json(kilometrosRecorridos);
+        } else {
+            res.status(404).json({ message: 'No se encontraron datos de kilometraje para la placa proporcionada' });
+        }
+    } catch (error) {
+        console.error('Error al obtener kilometraje por placa:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
 
 
 module.exports={
@@ -293,5 +321,7 @@ module.exports={
     getVehiDescPorPlaca,
     getDatosControlCombustible,
     getDatosControlCombustiblePorConductor,
-    getUbiFinalPorUbiOrigen 
+    getUbiFinalPorUbiOrigen,
+    getKilometrosRecorridos,
+    getKilometrosRecorridosPorPlaca
 }
