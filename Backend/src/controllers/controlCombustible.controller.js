@@ -74,6 +74,27 @@ const getVehiculoPorDescripcion = async (req, res) => {
     }
 };
 
+const getVehiDescPorPlaca = async (req, res) => {
+    try {
+        const placa = req.params.placa;
+
+        const response = await pool.query(
+            'SELECT * FROM public.ObtenerInfoConductorVehiculo($1);',
+            [placa]
+        );
+
+        if (response.rows && response.rows.length > 0) {
+            const vehiculo = response.rows[0]; // Solo toma el primer resultado
+            res.json(vehiculo); // Envía el resultado en formato JSON
+        } else {
+            res.status(404).json({ message: 'Vehículo no encontrado para la placa proporcionada' });
+        }
+    } catch (error) {
+        console.error('Error al obtener vehículo por placa:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
 
 
 
@@ -84,5 +105,6 @@ module.exports={
     getCombustibleControler,
     getCondVehiculo,
     getVehiConductor,
-    getVehiculoPorDescripcion
+    getVehiculoPorDescripcion,
+    getVehiDescPorPlaca
 }
