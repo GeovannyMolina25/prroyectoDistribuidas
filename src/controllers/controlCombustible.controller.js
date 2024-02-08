@@ -310,6 +310,27 @@ const getKilometrosRecorridosPorPlaca = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+const getConductorPorDescripcion = async (req, res) => {
+    try {
+        const descripcionVehiculo = req.params.descripcion;
+
+        const response = await pool.query(
+            'SELECT * FROM public."ObtenerConductorPorDescripcion"($1);',
+            [descripcionVehiculo]
+        );
+
+        if (response.rows && response.rows.length > 0) {
+            const conductor = response.rows;
+            res.json(conductor);
+        } else {
+            res.status(404).json({ message: 'No se encontraron datos del conductor para la descripción del vehículo proporcionada' });
+        }
+    } catch (error) {
+        console.error('Error al obtener conductor por descripción de vehículo:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
 
 
 module.exports={
@@ -323,5 +344,6 @@ module.exports={
     getDatosControlCombustiblePorConductor,
     getUbiFinalPorUbiOrigen,
     getKilometrosRecorridos,
-    getKilometrosRecorridosPorPlaca
+    getKilometrosRecorridosPorPlaca,
+    getConductorPorDescripcion
 }
