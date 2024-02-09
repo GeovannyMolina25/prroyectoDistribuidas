@@ -108,7 +108,7 @@ const getVehiConductor = async (req, res) => {
 
         if (response.rows && response.rows.length > 0) {
             const conductores = response.rows[0]; 
-            console.log(typeof conductores)
+            console.log(conductores)
             conductoresNew  = conductores.split(",")
             res.json(conductoresNew);
         } else {
