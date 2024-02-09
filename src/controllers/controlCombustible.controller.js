@@ -108,8 +108,7 @@ const getVehiConductor = async (req, res) => {
 
         if (response.rows && response.rows.length > 0) {
             const conductores = response.rows[0]; 
-            console.log(conductores)
-            conductoresNew  = conductores.split(",")
+            conductoresNew  = conductores.ObtenerVehiculoPorConductor.split(",")
             res.json(conductoresNew);
         } else {
             res.status(404).json({ message: 'Conductores no encontrados para el vehículo' });
