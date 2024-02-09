@@ -107,9 +107,16 @@ const getVehiConductor = async (req, res) => {
         const response = await pool.query('SELECT public."ObtenerVehiculoPorConductor"($1)', [id]);
 
         if (response.rows && response.rows.length > 0) {
-            const conductores = response.rows[0]; 
-            conductoresNew  = conductores.ObtenerVehiculoPorConductor.split(",")
-            res.json(conductoresNew);
+            const vehiculos = response.rows.map((data)=>{
+                const vehiculo = {
+                    id_vehiculo : data.ObtenerVehiculoPorConductor.split(",")[0],
+                    placa_veh:data.ObtenerVehiculoPorConductor.split(",")[1],
+                    descripcion_veh:data.ObtenerVehiculoPorConductor.split(",")[2]
+                }
+                return vehiculo
+            })
+           
+            res.json(vehiculos);
         } else {
             res.status(404).json({ message: 'Conductores no encontrados para el vehículo' });
         }
