@@ -107,28 +107,9 @@ const getVehiConductor = async (req, res) => {
         const response = await pool.query('SELECT public."ObtenerVehiculoPorConductor"($1)', [id]);
 
         if (response.rows && response.rows.length > 0) {
-            const vehiculos = response.rows.map((data) => {
-                const vehiculoData = data.ObtenerVehiculoPorConductor.split(',');
+            
+            res.json(response.rows); 
 
-                // Aquí accedemos a cada elemento del arreglo vehiculoData
-                const id_vehiculo = vehiculoData[0];
-                const placa_veh = vehiculoData[1];
-                const descripcion_veh = vehiculoData[2];
-
-                // Realiza operaciones específicas con los datos si es necesario
-                // Por ejemplo, puedes realizar validaciones o conversiones de tipos de datos
-
-                // Luego puedes construir tu objeto vehiculo con los datos procesados
-                const vehiculo = {
-                    id_vehiculo: id_vehiculo,
-                    placa_veh: placa_veh,
-                    descripcion_veh: descripcion_veh
-                };
-
-                return vehiculo;
-            });
-
-            res.json(vehiculos);
         } else {
             res.status(404).json({ message: 'Conductores no encontrados para el vehículo' });
         }
