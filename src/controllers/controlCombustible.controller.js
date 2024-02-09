@@ -107,9 +107,8 @@ const getVehiConductor = async (req, res) => {
         const response = await pool.query('SELECT public."ObtenerVehiculoPorConductor"($1)', [id]);
 
         if (response.rows && response.rows.length > 0) {
-            const { id_vehiculo, placa_veh, descripcion_veh } = response.rows[0];
-            const conductores = { id_vehiculo, placa_veh, descripcion_veh };
-            console.log(conductores);
+            const conductores = response.rows[0]; 
+            console.log(conductores)
             res.json(conductores);
         } else {
             res.status(404).json({ message: 'Conductores no encontrados para el vehículo' });
@@ -119,7 +118,6 @@ const getVehiConductor = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
-
 
 // obtener vehiculo por descripcion
 const getVehiculoPorDescripcion = async (req, res) => {
