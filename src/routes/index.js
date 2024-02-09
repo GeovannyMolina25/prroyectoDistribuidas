@@ -32,7 +32,9 @@ router.get('/ubicacion',getUbicacion )
 
 //Nueva ruta para obtener control combustibles
 router.get('/ControlRegistro',getCombustibleControler);
+//obtener informacion del vehiculo con el id
 router.get('/ControlRegistro/CondVehiculo/:id',getCondVehiculo);
+
 router.get('/ControlRegistro/vehiConductor/:id',getVehiConductor);
 router.get('/ControlRegistro/descVehiculo/:descripcion',getVehiculoPorDescripcion);
 router.get('/ControlRegistro/placaDescripcionVehiculo/:placa',getVehiDescPorPlaca);
