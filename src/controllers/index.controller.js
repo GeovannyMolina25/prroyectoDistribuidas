@@ -15,13 +15,18 @@ const getUsers = async(req, res)=>{
 }
 const getUserById = async (req, res) => {
     try {
-        const id = req.params.id;
-        const response = await pool.query('SELECT public."ObtenerConductorId"($1) AS nombre_conductor', [id]);
+        const idConductor = req.params.id; // Suponiendo que recibes el id del conductor como un parámetro en la URL
+
+        const response = await pool.query(
+            'SELECT * FROM Conductor WHERE id_conductor = $1',
+            [idConductor]
+        );
 
         if (response.rows && response.rows.length > 0) {
-            res.json(response.rows[0]);
+            const conductor = response.rows[0]; // Obtener el primer conductor encontrado
+            res.json({ conductor: conductor });
         } else {
-            res.status(404).json({ message: 'Conductor no encontrado' });
+            res.status(404).json({ message: 'No se encontraron datos del conductor' });
         }
     } catch (error) {
         console.error('Error al obtener conductor por ID:', error);
@@ -29,11 +34,23 @@ const getUserById = async (req, res) => {
     }
 };
 
-const getUserByName = async(req,res) =>{
-    const nombre = req.params.id;
-    const response = await pool.query('Select * from conductor WHERE nombre_con = $1', [nombre]);
-    res.json(response.rows);
-}
+
+const getUserByName = async (req, res) => {
+    try {
+        const nombre = req.params.id;
+        const response = await pool.query('SELECT * FROM conductor WHERE nombre_con = $1', [nombre]);
+
+        if (response.rows && response.rows.length > 0) {
+            res.json(response.rows);
+        } else {
+            res.status(404).json({ message: 'No se encontraron conductores con el nombre proporcionado' });
+        }
+    } catch (error) {
+        console.error('Error al obtener conductores por nombre:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
 
 const getUserByIdCombustible = async(req, res) =>{
     const id = req.params.id;

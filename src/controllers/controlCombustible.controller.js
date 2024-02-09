@@ -107,15 +107,27 @@ const getVehiConductor = async (req, res) => {
         const response = await pool.query('SELECT public."ObtenerVehiculoPorConductor"($1)', [id]);
 
         if (response.rows && response.rows.length > 0) {
-            const vehiculos = response.rows.map((data)=>{
+            const vehiculos = response.rows.map((data) => {
+                const vehiculoData = data.ObtenerVehiculoPorConductor.split(',');
+
+                // Aquí accedemos a cada elemento del arreglo vehiculoData
+                const id_vehiculo = vehiculoData[0];
+                const placa_veh = vehiculoData[1];
+                const descripcion_veh = vehiculoData[2];
+
+                // Realiza operaciones específicas con los datos si es necesario
+                // Por ejemplo, puedes realizar validaciones o conversiones de tipos de datos
+
+                // Luego puedes construir tu objeto vehiculo con los datos procesados
                 const vehiculo = {
-                    id_vehiculo : data.ObtenerVehiculoPorConductor.split(",")[0],
-                    placa_veh:data.ObtenerVehiculoPorConductor.split(",")[1],
-                    descripcion_veh:data.ObtenerVehiculoPorConductor.split(",")[2]
-                }
-                return vehiculo
-            })
-           
+                    id_vehiculo: id_vehiculo,
+                    placa_veh: placa_veh,
+                    descripcion_veh: descripcion_veh
+                };
+
+                return vehiculo;
+            });
+
             res.json(vehiculos);
         } else {
             res.status(404).json({ message: 'Conductores no encontrados para el vehículo' });
@@ -125,6 +137,8 @@ const getVehiConductor = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+
 
 // obtener vehiculo por descripcion
 const getVehiculoPorDescripcion = async (req, res) => {
@@ -172,38 +186,15 @@ const getVehiDescPorPlaca = async (req, res) => {
 const getDatosControlCombustible = async (req, res) => {
     try {
         const response = await pool.query(
-            'SELECT placa_vehiculo, descripcion_vehiculo, fecha_control, SUM(galon_controlc) AS total_galon_controlc FROM public."ObtenerDatosControlCombustiblePorConductor"() GROUP BY placa_vehiculo, descripcion_vehiculo, fecha_control;'
+            'SELECT placa_vehiculo, descripcion_vehiculo, fecha_control, SUM(galon_controlc) AS total_galon_controlc ' +
+            'FROM public."ObtenerDatosControlCombustible"() ' +
+            'GROUP BY placa_vehiculo, descripcion_vehiculo, fecha_control;'
         );
 
         if (response.rows && response.rows.length > 0) {
-            const datosControlCombustible = {};
+            const datosControlCombustible = response.rows;
 
-            response.rows.forEach(row => {
-                const placa = row.placa_vehiculo;
-                const fecha = row.fecha_control.toISOString().slice(0, 10); // Convertir la fecha a formato ISO
-
-                // Verificar si ya hay datos con la misma placa y fecha
-                if (datosControlCombustible[placa] && datosControlCombustible[placa][fecha]) {
-                    // Si existe, sumar los galones de combustible
-                    datosControlCombustible[placa][fecha].total_galon_controlc += row.total_galon_controlc;
-                } else {
-                    // Si no existe, agregar el nuevo registro
-                    if (!datosControlCombustible[placa]) {
-                        datosControlCombustible[placa] = {};
-                    }
-                    datosControlCombustible[placa][fecha] = row;
-                }
-            });
-
-            // Convertir el objeto a un array de objetos
-            const result = [];
-            for (const placa in datosControlCombustible) {
-                for (const fecha in datosControlCombustible[placa]) {
-                    result.push(datosControlCombustible[placa][fecha]);
-                }
-            }
-
-            res.json(result);
+            res.json(datosControlCombustible);
         } else {
             res.status(404).json({ message: 'No se encontraron datos de control de combustible' });
         }
@@ -212,13 +203,13 @@ const getDatosControlCombustible = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
 const getDatosControlCombustiblePorConductor = async (req, res) => {
     try {
-        // Obtener el Id_conductor del cuerpo de la solicitud o de donde corresponda
-        const idConductor = req.body.id; // Suponiendo que se proporciona en el cuerpo de la solicitud
+        const idConductor = req.params.id; // Suponiendo que estás pasando el ID del conductor como parámetro
 
         const response = await pool.query(
-            'SELECT placa_vehiculo, descripcion_vehiculo, fecha_control, SUM(galon_controlc) AS total_galon_controlc FROM public."ObtenerDatosControlCombustiblePorConductor"($1) GROUP BY placa_vehiculo, descripcion_vehiculo, fecha_control;',
+            'SELECT * FROM public."ObtenerDatosControlCombustiblePorConductor"($1)',
             [idConductor]
         );
 
@@ -226,27 +217,28 @@ const getDatosControlCombustiblePorConductor = async (req, res) => {
             const datosControlCombustible = {};
 
             response.rows.forEach(row => {
-                const placa = row.placa_vehiculo;
-                const fecha = row.fecha_control.toISOString().slice(0, 10); // Convertir la fecha a formato ISO
+                const placaVehiculo = row.placa_vehiculo;
+                const descripcionVehiculo = row.descripcion_vehiculo;
+                const fechaControl = row.fecha_control.toISOString().slice(0, 10); // Convertir la fecha a formato ISO
 
                 // Verificar si ya hay datos con la misma placa y fecha
-                if (datosControlCombustible[placa] && datosControlCombustible[placa][fecha]) {
+                if (datosControlCombustible[placaVehiculo] && datosControlCombustible[placaVehiculo][fechaControl]) {
                     // Si existe, sumar los galones de combustible
-                    datosControlCombustible[placa][fecha].total_galon_controlc += row.total_galon_controlc;
+                    datosControlCombustible[placaVehiculo][fechaControl].total_galon_controlc += row.galon_controlc;
                 } else {
                     // Si no existe, agregar el nuevo registro
-                    if (!datosControlCombustible[placa]) {
-                        datosControlCombustible[placa] = {};
+                    if (!datosControlCombustible[placaVehiculo]) {
+                        datosControlCombustible[placaVehiculo] = {};
                     }
-                    datosControlCombustible[placa][fecha] = row;
+                    datosControlCombustible[placaVehiculo][fechaControl] = row;
                 }
             });
 
             // Convertir el objeto a un array de objetos
             const result = [];
-            for (const placa in datosControlCombustible) {
-                for (const fecha in datosControlCombustible[placa]) {
-                    result.push(datosControlCombustible[placa][fecha]);
+            for (const placaVehiculo in datosControlCombustible) {
+                for (const fechaControl in datosControlCombustible[placaVehiculo]) {
+                    result.push(datosControlCombustible[placaVehiculo][fechaControl]);
                 }
             }
 
@@ -259,6 +251,7 @@ const getDatosControlCombustiblePorConductor = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
 
 const getUbiFinalPorUbiOrigen  = async (req, res) => {
     try {
@@ -323,13 +316,22 @@ const getConductorPorDescripcion = async (req, res) => {
         const descripcionVehiculo = req.params.descripcion;
 
         const response = await pool.query(
-            'SELECT * FROM public."ObtenerConductorPorDescripcion"($1);',
+            'SELECT * FROM public."ObtenerConductorPorDescripcion"($1)',
             [descripcionVehiculo]
         );
 
         if (response.rows && response.rows.length > 0) {
-            const conductor = response.rows;
-            res.json(conductor);
+            // Extraer nombre y apellido del conductor de cada fila de la respuesta
+            const conductores = response.rows.map(row => {
+                return {
+                    nombre_conductor: row.nombre_con,
+                    apellido_conductor: row.apellido_con,
+                    placa_veh: row.placa_veh
+                };
+            });
+
+            // Enviar la respuesta JSON con la información del conductor
+            res.json(conductores);
         } else {
             res.status(404).json({ message: 'No se encontraron datos del conductor para la descripción del vehículo proporcionada' });
         }
@@ -338,6 +340,8 @@ const getConductorPorDescripcion = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+
 
 
 
