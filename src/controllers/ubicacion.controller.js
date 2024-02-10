@@ -16,10 +16,20 @@ const getUbicacion = async (req, res) => {
 
 const getUbicacionSinRepetirOrigen = async (req, res) => {
   console.log("getUbicacionSinRepetirOrigen");
-  const response = await pool.query(
-    "SELECT DISTINCT origen_ubi, destino_ubi, id_ubicacion FROM ubicacion"
+  const response = await pool.query("Select * from ubicacion");
+
+  const origenesUnicos = new Set(
+    response.data.map((ubicacion) => ubicacion.origen_ubi)
   );
-  res.status(200).json(response.rows);
+  const ubicacionesUnicas = new Map();
+  origenesUnicos.forEach((origen) => {
+    const ubicacionesConEsteOrigen = ubicaciones.filter(
+      (ubicacion) => ubicacion.origen_ubi === origen
+    );
+    ubicacionesUnicas.set(origen, ubicacionesConEsteOrigen[0]);
+  });
+  const ubicacionesUnicasArray = Array.from(ubicacionesUnicas.values());
+  res.status(200).json(ubicacionesUnicasArray);
 };
 
 module.exports = {
