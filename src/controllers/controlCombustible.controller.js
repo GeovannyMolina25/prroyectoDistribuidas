@@ -85,7 +85,7 @@ const insertarDatosControlCombustible = async (req, res) => {
 const getCondVehiculo = async (req, res) => {
     try {
         const idConductor = req.params.id;
-        const response = await pool.query('SELECT public."ObtenerVehiculoPorConductor"($1)', [idConductor]);
+        const response = await pool.query('SELECT * FROM "ObtenerVehiculoPorConductor"($1)', [idConductor]);
 
         if (response.rows && response.rows.length > 0) {
             const vehiculos = response.rows;
@@ -190,7 +190,7 @@ const getDatosControlCombustiblePorConductor = async (req, res) => {
         const idConductor = req.params.id; // Suponiendo que estás pasando el ID del conductor como parámetro
 
         const response = await pool.query(
-            'SELECT * FROM public."ObtenerDatosControlCombustiblePorConductor"($1)',
+            'SELECT * FROM "ObtenerDatosControlCombustiblePorConductor"($1)',
             [idConductor]
         );
 
@@ -239,7 +239,7 @@ const getUbiFinalPorUbiOrigen  = async (req, res) => {
         const origen = req.params.origen;
 
         const response = await pool.query(
-            'SELECT * FROM public."ObtenerUbicacionPorOrigen"($1);',
+            'SELECT * FROM "ObtenerUbicacionPorOrigen"($1);',
             [origen]
         );
 
