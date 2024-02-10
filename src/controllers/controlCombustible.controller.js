@@ -302,17 +302,8 @@ const getConductorPorDescripcion = async (req, res) => {
         );
 
         if (response.rows && response.rows.length > 0) {
-            // Extraer nombre y apellido del conductor de cada fila de la respuesta
-            const conductores = response.rows.map(row => {
-                return {
-                    nombre_conductor: row.nombre_con,
-                    apellido_conductor: row.apellido_con,
-                    placa_veh: row.placa_veh
-                };
-            });
-
-            // Enviar la respuesta JSON con la información del conductor
-            res.json(conductores);
+            
+            res.json(response.rows);
         } else {
             res.status(404).json({ message: 'No se encontraron datos del conductor para la descripción del vehículo proporcionada' });
         }
