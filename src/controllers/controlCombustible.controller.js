@@ -104,7 +104,7 @@ const getCondVehiculo = async (req, res) => {
 const getVehiConductor = async (req, res) => {
     try {
         const id = req.params.id;
-        const response = await pool.query('SELECT public."ObtenerVehiculoPorConductor"($1)', [id]);
+        const response = await pool.query('SELECT * from "ObtenerVehiculoPorConductor"($1)', [id]);
 
         if (response.rows && response.rows.length > 0) {
             
