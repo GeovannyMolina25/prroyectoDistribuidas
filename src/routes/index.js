@@ -4,7 +4,7 @@ const router = Router();
 const { getUsers, createUser, getUserById, deleteUser, updateUser, getUserByName } = require('../controllers/index.controller');
 const { getVehiculos } = require('../controllers/vehiculos.controller');
 const {getCombustible} = require('../controllers/combustible.controller');
-const {getUbicacion} = require('../controllers/ubicacion.controller');
+const {getUbicacion,getUbicacionSinRepetirOrigen} = require('../controllers/ubicacion.controller');
 const {getCombustibleControler, insertarDatosControlCombustible,getCondVehiculo,getVehiConductor,getVehiculoPorDescripcion,getVehiDescPorPlaca, 
     getDatosControlCombustible,getDatosControlCombustiblePorConductor,getUbiFinalPorUbiOrigen,
     getKilometrosRecorridos,getKilometrosRecorridosPorPlaca,getConductorPorDescripcion,getConductorContrlCombustiblePorFecha} = require('../controllers/controlCombustible.controller')
