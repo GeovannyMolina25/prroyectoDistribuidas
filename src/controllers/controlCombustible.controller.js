@@ -346,7 +346,13 @@ const getConductorContrlCombustiblePorFecha = async (req, res) => {
       );
   
       if (response.rows && response.rows.length > 0) {
-        res.json(response.rows);
+        const conductores = response.rows;
+        const conductoresUnicos = {};
+        conductores.forEach(conductor => {
+            conductoresUnicos[conductor.id_conductor] = conductor;
+        });
+        const conductoresUnicosArray = Object.values(conductoresUnicos);
+        res.json(conductoresUnicosArray);
       } else {
         res.status(404).json({
           message:
