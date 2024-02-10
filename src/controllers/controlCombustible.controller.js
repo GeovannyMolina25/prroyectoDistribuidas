@@ -423,6 +423,34 @@ const getDatosGraficoPorfecha = async (req, res) => {
     }
   };
   
+  const getDatosGraficoPorfechaPorId = async (req, res) => {
+    try {
+        const id = req.params.id;
+      const fecha_cond = req.params.fecha;
+  
+      const response = await pool.query(
+        'SELECT public."ObtenerDatosGraficaPorfechaPorFechaIdConductor"($1, $2)',
+        [fecha_cond, id]
+      );
+      
+      console.log(response.rows);
+      if (response.rows && response.rows.length > 0) {
+        res.json(response.rows);
+      } else {
+        res.status(404).json({
+          message:
+            "No se encontraron datos del conductor para la descripción del vehículo proporcionada",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "Error al obtener conductor por descripción de vehículo:",
+        error
+      );
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  };
+  
 
 
 module.exports = {
@@ -440,5 +468,6 @@ module.exports = {
   getConductorPorDescripcion,
   getConductorContrlCombustiblePorFecha,
   getDatosDashboartPorFecha,
-  getDatosGraficoPorfecha
+  getDatosGraficoPorfecha,
+  getDatosGraficoPorfechaPorId
 };
