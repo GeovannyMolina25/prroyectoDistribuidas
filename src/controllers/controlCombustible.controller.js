@@ -451,6 +451,35 @@ const getDatosGraficoPorfecha = async (req, res) => {
     }
   };
   
+  const getObtenerPlaca= async (req, res) => {
+    try {
+      const response = await pool.query(
+        'SELECT * from "ObtenerPlacas"()',
+      );
+      console.log(response.rows);
+        if (response.rows && response.rows.length > 0) {
+          const vehiculo = response.rows;
+          const vehiculoUnicos = {};
+          vehiculo.forEach((vehiculo) => {
+            vehiculoUnicos[vehiculo.id_vehiculo] = vehiculo;
+          });
+          const vehiculoUnicosArray = Object.values(vehiculoesUnicos);
+          res.json(vehiculoUnicosArray );
+      } else {
+        res.status(404).json({
+          message:
+            "No se encontraron datos del conductor para la descripción del vehículo proporcionada",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "Error al obtener conductor por descripción de vehículo:",
+        error
+      );
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  };
+  
 
 
 module.exports = {
@@ -469,5 +498,6 @@ module.exports = {
   getConductorContrlCombustiblePorFecha,
   getDatosDashboartPorFecha,
   getDatosGraficoPorfecha,
-  getDatosGraficoPorfechaPorId
+  getDatosGraficoPorfechaPorId,
+  getObtenerPlaca
 };
