@@ -463,7 +463,7 @@ const getDatosGraficoPorfecha = async (req, res) => {
           vehiculos.forEach((vehiculo) => {
             vehiculoUnicos[vehiculo.id_vehiculo] = vehiculo;
           });
-          const vehiculoUnicosArray = Object.values(vehiculosUnicos);
+          const vehiculoUnicosArray = Object.values(vehiculoUnicos);
           res.json(vehiculoUnicosArray );
       } else {
         res.status(404).json({
