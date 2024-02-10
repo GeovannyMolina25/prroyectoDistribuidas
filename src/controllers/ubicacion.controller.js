@@ -15,6 +15,7 @@ const getUbicacion = async (req, res) => {
 };
 
 const getUbicacionSinRepetirOrigen = async (req, res) => {
+  console.log("getUbicacionSinRepetirOrigen");
   const response = await pool.query("SELECT DISTINCT origen FROM ubicacion");
   res.status(200).json(response.rows);
 };
