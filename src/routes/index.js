@@ -9,7 +9,7 @@ const {getCombustibleControler, insertarDatosControlCombustible,getCondVehiculo,
     getVehiculoPorDescripcion,getVehiDescPorPlaca, 
     getDatosControlCombustible,getDatosControlCombustiblePorConductor,getUbiFinalPorUbiOrigen,
     getKilometrosRecorridos,getKilometrosRecorridosPorPlaca,getConductorPorDescripcion,
-    getConductorContrlCombustiblePorFecha,getDatosDashboartPorFecha} = require('../controllers/controlCombustible.controller')
+    getConductorContrlCombustiblePorFecha,getDatosDashboartPorFecha,getDatosGraficoPorfecha} = require('../controllers/controlCombustible.controller')
 
 
 //obtener todos los usuarios
@@ -86,5 +86,9 @@ router.get('/ControlRegistro/ConductorPorDescripcion/:descripcion',getConductorP
 router.get('/ControlRegistro/ConductorContrlCombustiblePorFecha/:fecha',getConductorContrlCombustiblePorFecha);
 
 router.get('/ControlRegistro/DatosDashboartPorFecha/:fecha',getDatosDashboartPorFecha);
+
+
+router.get('/ControlRegistro/DatosGraficoPorfecha/:fecha',getDatosGraficoPorfecha);
+
 
 module.exports = router; 

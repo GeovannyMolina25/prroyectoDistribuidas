@@ -162,11 +162,9 @@ const getVehiDescPorPlaca = async (req, res) => {
       const vehiculo = response.rows[0]; // Solo toma el primer resultado
       res.json(vehiculo); // Envía el resultado en formato JSON
     } else {
-      res
-        .status(404)
-        .json({
-          message: "Vehículo no encontrado para la placa proporcionada",
-        });
+      res.status(404).json({
+        message: "Vehículo no encontrado para la placa proporcionada",
+      });
     }
   } catch (error) {
     console.error("Error al obtener vehículo por placa:", error);
@@ -382,11 +380,10 @@ const getDatosDashboartPorFecha = async (req, res) => {
       'SELECT * from public."ObtenerDatosDashboartControlCombustible"($1)',
       [fecha_cond]
     );
-        console.log(response.rows)
+    console.log(response.rows);
     if (response.rows && response.rows.length > 0) {
       res.json(response.rows);
     } else {
-
       res.status(404).json({
         message:
           "No se encontraron datos del conductor para la descripción del vehículo proporcionada",
@@ -400,6 +397,33 @@ const getDatosDashboartPorFecha = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+const getDatosGraficoPorfecha = async (req, res) => {
+    try {
+      const fecha_cond = req.params.fecha;
+  
+      const response = await pool.query(
+        'SELECT * from public."ObtenerDatosDashboartControlCombustible"($1)',
+        [fecha_cond]
+      );
+      console.log(response.rows);
+      if (response.rows && response.rows.length > 0) {
+        res.json(response.rows);
+      } else {
+        res.status(404).json({
+          message:
+            "No se encontraron datos del conductor para la descripción del vehículo proporcionada",
+        });
+      }
+    } catch (error) {
+      console.error(
+        "Error al obtener conductor por descripción de vehículo:",
+        error
+      );
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  };
+  
+
 
 module.exports = {
   getCombustibleControler,
@@ -416,4 +440,5 @@ module.exports = {
   getConductorPorDescripcion,
   getConductorContrlCombustiblePorFecha,
   getDatosDashboartPorFecha,
+  getDatosGraficoPorfecha
 };
