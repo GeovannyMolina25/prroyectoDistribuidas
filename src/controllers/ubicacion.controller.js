@@ -23,7 +23,7 @@ const getUbicacionSinRepetirOrigen = async (req, res) => {
   );
   const ubicacionesUnicas = new Map();
   origenesUnicos.forEach((origen) => {
-    const ubicacionesConEsteOrigen = ubicaciones.filter(
+    const ubicacionesConEsteOrigen = response.rows.filter(
       (ubicacion) => ubicacion.origen_ubi === origen
     );
     ubicacionesUnicas.set(origen, ubicacionesConEsteOrigen[0]);
