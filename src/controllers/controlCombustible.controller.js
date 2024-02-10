@@ -429,7 +429,7 @@ const getDatosGraficoPorfecha = async (req, res) => {
       const fecha_cond = req.params.fecha;
   
       const response = await pool.query(
-        'SELECT public."ObtenerDatosGraficaPorfechaPorFechaIdConductor"($1, $2)',
+        'SELECT * from public."ObtenerDatosGraficaPorfechaPorFechaIdConductor"($1, $2)',
         [fecha_cond, id]
       );
       
