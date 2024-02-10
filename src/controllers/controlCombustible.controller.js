@@ -105,7 +105,7 @@ const getVehiConductor = async (req, res) => {
     try {
         const id = req.params.id;
         const response = await pool.query('select * from "obtenervehiculoporconductor"($1)', [id]);
-
+        console.log(response)
         if (response.rows && response.rows.length > 0) {
             
             res.json(response.rows); 
@@ -153,7 +153,7 @@ const getVehiDescPorPlaca = async (req, res) => {
         );
 
         if (response.rows && response.rows.length > 0) {
-            const vehiculo = response.rows[0]; // Solo toma el primer resultado
+            const vehiculo = response.rows; // Solo toma el primer resultado
             res.json(vehiculo); // Envía el resultado en formato JSON
         } else {
             res.status(404).json({ message: 'Vehículo no encontrado para la placa proporcionada' });
@@ -313,6 +313,28 @@ const getConductorPorDescripcion = async (req, res) => {
     }
 };
 
+const getConductorContrlCombustiblePorFecha = async (req, res) => {
+    try {
+        const fecha = req.params.fecha;
+
+        const response = await pool.query(
+            'SELECT * from public."ObtenerConductorContrlCombustiblePorFecha"($1)',
+            [fecha]
+        );
+
+        if (response.rows && response.rows.length > 0) {
+            
+            res.json(response.rows);
+        } else {
+            res.status(404).json({ message: 'No se encontraron datos del conductor para la descripción del vehículo proporcionada' });
+        }
+    } catch (error) {
+        console.error('Error los datos la fecha no ha sido encontrada', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+
 
 
 
@@ -329,5 +351,6 @@ module.exports={
     getUbiFinalPorUbiOrigen,
     getKilometrosRecorridos,
     getKilometrosRecorridosPorPlaca,
-    getConductorPorDescripcion
+    getConductorPorDescripcion,
+    getConductorContrlCombustiblePorFecha
 }

@@ -6,7 +6,8 @@ const { getVehiculos } = require('../controllers/vehiculos.controller');
 const {getCombustible} = require('../controllers/combustible.controller');
 const {getUbicacion} = require('../controllers/ubicacion.controller');
 const {getCombustibleControler, insertarDatosControlCombustible,getCondVehiculo,getVehiConductor,getVehiculoPorDescripcion,getVehiDescPorPlaca, 
-    getDatosControlCombustible,getDatosControlCombustiblePorConductor,getUbiFinalPorUbiOrigen,getKilometrosRecorridos,getKilometrosRecorridosPorPlaca,getConductorPorDescripcion} = require('../controllers/controlCombustible.controller')
+    getDatosControlCombustible,getDatosControlCombustiblePorConductor,getUbiFinalPorUbiOrigen,getKilometrosRecorridos,
+    getKilometrosRecorridosPorPlaca,getConductorPorDescripcion, getConductorContrlCombustiblePorFecha} = require('../controllers/controlCombustible.controller')
 
 
 //obtener todos los usuarios
@@ -58,4 +59,6 @@ router.get('/ControlRegistro/KilometrosRecorridosPorPlaca/:placa',getKilometrosR
 //"nombre_conductor","apellido_conductor","placa_veh" por descripcion del vehiculo
 router.get('/ControlRegistro/ConductorPorDescripcion/:descripcion',getConductorPorDescripcion);
 
+
+router.get('/ControlRegistro/ConductorContrlCombustiblePorFecha/:fecha',getConductorContrlCombustiblePorFecha)
 module.exports = router; 
