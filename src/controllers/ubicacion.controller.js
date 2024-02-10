@@ -19,7 +19,7 @@ const getUbicacionSinRepetirOrigen = async (req, res) => {
   const response = await pool.query("Select * from ubicacion");
 
   const origenesUnicos = new Set(
-    response.data.map((ubicacion) => ubicacion.origen_ubi)
+    response.rows.map((ubicacion) => ubicacion.origen_ubi)
   );
   const ubicacionesUnicas = new Map();
   origenesUnicos.forEach((origen) => {
