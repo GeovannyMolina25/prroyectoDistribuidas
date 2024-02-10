@@ -362,9 +362,6 @@ const getConductorContrlCombustiblePorFecha = async (req, res) => {
     }
   };
 
-
-
-
 module.exports={
     getCombustibleControler,
     insertarDatosControlCombustible,
