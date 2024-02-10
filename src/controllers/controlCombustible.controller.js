@@ -105,21 +105,24 @@ const getCondVehiculo = async (req, res) => {
 
 //traer los datos por placa del vehiculo
 const getVehiConductor = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const response = await pool.query('select * from "obtenervehiculoporconductor"($1)', [id]);
+  try {
+    const id = req.params.id;
+    const response = await pool.query(
+      'select * from "obtenervehiculoporconductor"($1)',
+      [id]
+    );
 
-        if (response.rows && response.rows.length > 0) {
-            
-            res.json(response.rows); 
-
-        } else {
-            res.status(404).json({ message: 'Conductores no encontrados para el vehículo' });
-        }
-    } catch (error) {
-        console.error('Error al obtener conductores por vehículo:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+    if (response.rows && response.rows.length > 0) {
+      res.json(response.rows);
+    } else {
+      res
+        .status(404)
+        .json({ message: "Conductores no encontrados para el vehículo" });
     }
+  } catch (error) {
+    console.error("Error al obtener conductores por vehículo:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 };
 
 // obtener vehiculo por descripcion
@@ -155,16 +158,20 @@ const getVehiDescPorPlaca = async (req, res) => {
       [placa]
     );
 
-        if (response.rows && response.rows.length > 0) {
-            const vehiculo = response.rows[0]; // Solo toma el primer resultado
-            res.json(vehiculo); // Envía el resultado en formato JSON
-        } else {
-            res.status(404).json({ message: 'Vehículo no encontrado para la placa proporcionada' });
-        }
-    } catch (error) {
-        console.error('Error al obtener vehículo por placa:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+    if (response.rows && response.rows.length > 0) {
+      const vehiculo = response.rows[0]; // Solo toma el primer resultado
+      res.json(vehiculo); // Envía el resultado en formato JSON
+    } else {
+      res
+        .status(404)
+        .json({
+          message: "Vehículo no encontrado para la placa proporcionada",
+        });
     }
+  } catch (error) {
+    console.error("Error al obtener vehículo por placa:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 };
 
 const getDatosControlCombustible = async (req, res) => {
@@ -337,76 +344,76 @@ const getConductorPorDescripcion = async (req, res) => {
   }
 };
 const getConductorContrlCombustiblePorFecha = async (req, res) => {
-    try {
-      const fecha_cond = req.params.fecha;
-  
-      const response = await pool.query(
-        'SELECT * from public."ObtenerConductorContrlCombustiblePorFecha"($1)',
-        [fecha_cond]
-      );
-  
-      if (response.rows && response.rows.length > 0) {
-        const conductores = response.rows;
-        const conductoresUnicos = {};
-        conductores.forEach(conductor => {
-            conductoresUnicos[conductor.id_conductor] = conductor;
-        });
-        const conductoresUnicosArray = Object.values(conductoresUnicos);
-        res.json(conductoresUnicosArray);
-      } else {
-        res.status(404).json({
-          message:
-            "No se encontraron datos del conductor para la descripción del vehículo proporcionada",
-        });
-      }
-    } catch (error) {
-      console.error(
-        "Error al obtener conductor por descripción de vehículo:",
-        error
-      );
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  };
-  const getDatosDashboartPorFecha = async (req, res) => {
-    try {
-      const fecha_cond = req.params.fecha;
-  
-      const response = await pool.query(
-        'SELECT * from public."ObtenerDatosDashboartControlCombustible"($1)',
-        [fecha_cond]
-      );
-  
-      if (response.rows && response.rows.length > 0) {
-        res.json(response.rows);
-      } else {
-        res.status(404).json({
-          message:
-            "No se encontraron datos del conductor para la descripción del vehículo proporcionada",
-        });
-      }
-    } catch (error) {
-      console.error(
-        "Error al obtener conductor por descripción de vehículo:",
-        error
-      );
-      res.status(500).json({ error: "Error interno del servidor" });
-    }
-  };
+  try {
+    const fecha_cond = req.params.fecha;
 
+    const response = await pool.query(
+      'SELECT * from public."ObtenerConductorContrlCombustiblePorFecha"($1)',
+      [fecha_cond]
+    );
 
-module.exports={
-    getCombustibleControler,
-    insertarDatosControlCombustible,
-    getCondVehiculo,
-    getVehiConductor,
-    getVehiculoPorDescripcion,
-    getVehiDescPorPlaca,
-    getDatosControlCombustible,
-    getDatosControlCombustiblePorConductor,
-    getUbiFinalPorUbiOrigen,
-    getKilometrosRecorridos,
-    getKilometrosRecorridosPorPlaca,
-    getConductorPorDescripcion,
-    getConductorContrlCombustiblePorFecha,
-    getDatosDashboartPorFecha
-}
+    if (response.rows && response.rows.length > 0) {
+      const conductores = response.rows;
+      const conductoresUnicos = {};
+      conductores.forEach((conductor) => {
+        conductoresUnicos[conductor.id_conductor] = conductor;
+      });
+      const conductoresUnicosArray = Object.values(conductoresUnicos);
+      res.json(conductoresUnicosArray);
+    } else {
+      res.status(404).json({
+        message:
+          "No se encontraron datos del conductor para la descripción del vehículo proporcionada",
+      });
+    }
+  } catch (error) {
+    console.error(
+      "Error al obtener conductor por descripción de vehículo:",
+      error
+    );
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+const getDatosDashboartPorFecha = async (req, res) => {
+  try {
+    const fecha_cond = req.params.fecha;
+
+    const response = await pool.query(
+      'SELECT * from public."ObtenerDatosDashboartControlCombustible"($1)',
+      [fecha_cond]
+    );
+        console.log(response.rows)
+    if (response.rows && response.rows.length > 0) {
+      res.json(response.rows);
+    } else {
+
+      res.status(404).json({
+        message:
+          "No se encontraron datos del conductor para la descripción del vehículo proporcionada",
+      });
+    }
+  } catch (error) {
+    console.error(
+      "Error al obtener conductor por descripción de vehículo:",
+      error
+    );
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+module.exports = {
+  getCombustibleControler,
+  insertarDatosControlCombustible,
+  getCondVehiculo,
+  getVehiConductor,
+  getVehiculoPorDescripcion,
+  getVehiDescPorPlaca,
+  getDatosControlCombustible,
+  getDatosControlCombustiblePorConductor,
+  getUbiFinalPorUbiOrigen,
+  getKilometrosRecorridos,
+  getKilometrosRecorridosPorPlaca,
+  getConductorPorDescripcion,
+  getConductorContrlCombustiblePorFecha,
+  getDatosDashboartPorFecha,
+};
